@@ -1,37 +1,25 @@
-from openai import OpenAI
-from dotenv import load_dotenv
-load_dotenv()
+import requests
 
-messages = [
-    {
-        "role": "system",
-        "content": (
-            "You are an artificial intelligence assistant and you need to "
-            "engage in a helpful, detailed, polite conversation with a user."
-        ),
-    },
-    {
-        "role": "user",
-        "content": (
-            "How many stars are in the universe?"
-        ),
-    },
-]
+url = "https://api.perplexity.ai/chat/completions"
 
-client = OpenAI(api_key=PERPLEXITY_API_KEY, base_url="https://api.perplexity.ai")
+payload = {
+    "model": "mistral-7b-instruct",
+    "messages": [
+        {
+            "role": "system",
+            "content": "Be precise and concise."
+        },
+        {
+            "role": "user",
+            "content": "How many stars are there in our galaxy?"
+        }
+    ]
+}
+headers = {
+    "accept": "application/json",
+    "content-type": "application/json"
+}
 
-# chat completion without streaming
-response = client.chat.completions.create(
-    model="mistral-7b-instruct",
-    messages=messages,
-)
-print(response)
+response = requests.post(url, json=payload, headers=headers)
 
-# chat completion with streaming
-response_stream = client.chat.completions.create(
-    model="mistral-7b-instruct",
-    messages=messages,
-    stream=True,
-)
-for response in response_stream:
-    print(response)
+print(response.text)
